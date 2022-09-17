@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myphp-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: production-frontend
+  template:
+    metadata:
+      name: myfrontend-pod
+      labels:
+        env: production-frontend
+    spec:
+      volumes:
+        - name: front-vol
+          persistentVolumeClaim:
+            claimName: bastion-frontend-pvc
+      containers:
+      - name: frontend
+        image: no1pelz/bastion_php
+        volumeMounts:
+          - mountPath: /mnt/medinext/docs
+            name: front-vol

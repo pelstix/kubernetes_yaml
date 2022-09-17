@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydb-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env: production-db
+  template:
+    metadata:
+      name: mydb-pod
+      labels:
+        env: production-db
+    spec:
+      restartPolicy: Always
+      volumes:
+        - name: db-vol
+          persistentVolumeClaim:
+            claimName: bastion-db-pvc
+      containers:
+      - name: database
+        image: mysql:5.7
+        envFrom:
+        - secretRef:
+            name: env-secrets
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: db-vol
